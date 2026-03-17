@@ -3,7 +3,6 @@
 Bilimsel literatürden otomatik olarak bilgi çıkaran ve bu bilgileri doğruladıktan sonra knowledge graph'a yazan çok katmanlı bir sistemdir.
 
 ---
----
 
 ## Mimari
 
