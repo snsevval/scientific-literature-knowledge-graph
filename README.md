@@ -3,12 +3,6 @@
 Bilimsel literatürden otomatik olarak bilgi çıkaran ve bu bilgileri doğruladıktan sonra knowledge graph'a yazan çok katmanlı bir sistemdir.
 
 ---
-
-## Temel Felsefe
-
-LLM tek başına güvenilir değildir.  
-Her çıktı birden fazla doğrulama katmanından geçmelidir.
-
 ---
 
 ## Mimari
