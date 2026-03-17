@@ -1,7 +1,6 @@
 ﻿# scientific-literature-knowledge-graph
-# ActiveScience v2
 
-ActiveScience v2, bilimsel literatürden otomatik olarak bilgi çıkaran ve bu bilgileri doğruladıktan sonra knowledge graph'a yazan çok katmanlı bir sistemdir.
+Bilimsel literatürden otomatik olarak bilgi çıkaran ve bu bilgileri doğruladıktan sonra knowledge graph'a yazan çok katmanlı bir sistemdir.
 
 ---
 
