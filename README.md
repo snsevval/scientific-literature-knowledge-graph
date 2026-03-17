@@ -1,93 +1,48 @@
 ﻿# scientific-literature-knowledge-graph
-CopyActiveScience v2
-Bilimsel literatürden otomatik olarak bilgi çıkaran ve bu bilgileri knowledge graph'a yazan çok katmanlı bir sistemdir.
-Temel Felsefe
-LLM tek başına güvenilir değildir. Her çıktı birden fazla doğrulama katmanından geçmelidir.
-Mimari
-Teknoloji Stack
+# ActiveScience v2
 
-Backend: Python FastAPI
-LLM (Extraction): Cerebras API — Qwen-3-235B
-LLM (Verification, TTD-DR, Reasoning): Ollama — llama3.1:8b
-Knowledge Graph: Neo4j
-Embedding: sentence-transformers/all-MiniLM-L6-v2
-Vector DB: FAISS
-Frontend: Next.js + TypeScript
+ActiveScience v2, bilimsel literatürden otomatik olarak bilgi çıkaran ve bu bilgileri doğruladıktan sonra knowledge graph'a yazan çok katmanlı bir sistemdir.
 
-Pipeline
-Kullanici sorgusu
+---
+
+## Temel Felsefe
+
+LLM tek başına güvenilir değildir.  
+Her çıktı birden fazla doğrulama katmanından geçmelidir.
+
+---
+
+## Mimari
+
+### Teknoloji Stack
+
+- Backend: Python (FastAPI)
+- LLM (Extraction): Cerebras API — Qwen-3-235B
+- LLM (Verification, TTD-DR, Reasoning): Ollama — llama3.1:8b
+- Knowledge Graph: Neo4j
+- Embedding: sentence-transformers/all-MiniLM-L6-v2
+- Vector DB: FAISS
+- Frontend: Next.js + TypeScript
+
+---
+
+## Pipeline
+
+```text
+Kullanıcı sorgusu
       |
 [1] RETRIEVAL       — arXiv, OpenAlex, CrossRef
       |
-[2] ENRICHMENT      — Unpaywall ile PDF/abstract zenginlestir
+[2] ENRICHMENT      — Unpaywall ile PDF/abstract zenginleştirme
       |
-[3] EXTRACTION      — Cerebras/Qwen ile entity + relation cikar
+[3] EXTRACTION      — Cerebras/Qwen ile entity + relation çıkarımı
       |
-[4] VERIFICATION    — Ollama ile relation abstractta var mi kontrol et
+[4] VERIFICATION    — Ollama ile relation gerçekten var mı kontrolü
       |
-[5] CRITICAL LAYER  — Deterministik schema + domain kontrolu
+[5] CRITICAL LAYER  — Deterministik schema + domain kontrolü
       |
-[6] TEXTBOOK KB     — Kitaplardan evidence cek
+[6] TEXTBOOK KB     — Kitaplardan evidence çekme
       |
-[7] TTD-DR          — Claim kitapla celisiyor mu kontrol et
+[7] TTD-DR          — Claim textbook ile çelişiyor mu?
       |
-[8] NEO4J           — Sadece dogrulanmis bilgileri yaz
-Moduller
-Retrieval
-Uc kaynaktan paralel arama yapar: arXiv, OpenAlex, CrossRef. DOI bazli tekillestirir, alakasiz makaleleri filtreler. Abstrakt olmayan makaleleri Unpaywall API ile PDF'ten zenginlestirir.
-Extraction Agent
-Cerebras uzerinde Qwen-3-235B kullanir. response_format: json_object ile JSON garantisi saglar. Entity tipleri: Material, Property, Application, Method, Element, Formula. Relation tipleri: HAS_PROPERTY, USED_IN, HAS_ELEMENT, HAS_FORMULA, SYNTHESIZED_BY.
-Verification Agent
-Ollama llama3.1:8b ile extraction ciktisindaki her relation icin abstracta bakar. Hallucinate edilmis relation'lari filtreler.
-Critical Layer
-Tamamen deterministik, LLM yoktur. Dort adimda calisir:
-
-Schema validation — entity ve relation tipleri gecerli mi
-Normalizasyon — sinonim sozlugu ile isimleri normalize et
-Element validation — periyodik tabloya karsi kontrol
-Relation legality — tip kombinasyonu gecerli mi
-Textbook KB — HAS_PROPERTY relation'lari icin kitap kaynagi bul
-
-Textbook Knowledge Base
-Dokuz ders kitabi, dort seviyede organize edilmistir. Toplam 19.695 chunk, FAISS IndexFlatL2 ile indekslenmistir. all-MiniLM-L6-v2 ile 384 boyutlu embedding uretir.
-Seviyeler:
-
-Level 1: Temel fizik ve kimya (OpenStax)
-Level 2: Ileri fizik (OpenStax)
-Level 3: Malzeme bilimi, isi transferi
-Level 4: Kati hal fizigi (Hofmann, Tong, Hilke)
-
-TTD-DR (Test-Time Diffusion Deep Researcher)
-Google Research'un 2025 tarihli TTD-DR makalesinden ilham alinmistir. Bilimsel claim'leri textbook KB + Ollama ile dogrular. CONTRADICTED verdict alan relation'lar Neo4j'e yazilmaz.
-Kontrol edilen relation tipleri: HAS_PROPERTY, SYNTHESIZED_BY, USED_IN.
-Graph Reasoning
-Kullanicinin dogal dil sorusunu Cypher query'e cevirir, Neo4j'i sorgular, sonucu dogal dile cevirir.
-Kurulum
-Gereksinimler
-
-Python 3.10+
-Neo4j 5.x
-Ollama (llama3.1:8b modeli yuklenmis)
-Node.js 18+ (frontend icin)
-
-Ortam Degiskenleri
-.env dosyasi olusturun:
-CEREBRAS_API_KEY=...
-NEO4J_URI=bolt://127.0.0.1:7687
-NEO4J_USER=neo4j
-NEO4J_PASSWORD=...
-GROQ_API_KEY=...
-Backend
-bashpip install -r requirements.txt
-uvicorn api:app --reload --port 8000
-Frontend
-bashcd frontend
-npm install
-npm run dev
-Textbook KB Olusturma
-data/ klasorune kitaplari ekleyin ve indeksleme scriptini calistirin.
-v1 ile Karsilastirma
-Ozellikv1 (Main)v2LLMGPT-3.5Cerebras Qwen-3-235B + OllamaKaynakSadece arXivarXiv + OpenAlex + CrossRefCritical LayerYok5 adimTextbook KBYok9 kitap, 19.695 chunkTTD-DRYokHAS_PROPERTY + SYNTHESIZED_BY + USED_INVerificationYokOllama tabanliCiktiDirekt CypherValidated Neo4j
-Notlar
-
-data/ klasoru repoya dahil edilmemistir. Kitaplari kendiniz temin etmeniz gerekir.
+[8] NEO4J           — Sadece doğrulanmış bilgileri yaz
